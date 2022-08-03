@@ -51,7 +51,6 @@ class PostgresKernel(Kernel):
 
     def __init__(self, **kwargs):
         Kernel.__init__(self, **kwargs)
-        log('inside init')
         # Catch KeyboardInterrupt, cancel query, raise QueryCancelledError
         psycopg2.extensions.set_wait_callback(wait_select_inter)
         self._conn_string = os.getenv('DATABASE_URL', '')
@@ -75,13 +74,12 @@ class PostgresKernel(Kernel):
         return self._banner
 
     def _start_connection(self):
-        log('starting connection')
+        log('starting connection: ' + self._conn_string)
         try:
             self._conn = psycopg2.connect(self._conn_string)
             self._conn.autocommit = self._autocommit
-        except OperationalError:
-            log('failed to connect to {}'.format(self._conn_string))
-            message = '''Failed to connect to a database at {}'''.format(self._conn_string)
+        except OperationalError as e:
+            message = '''Failed to connect to a database at {}: {}'''.format(self._conn_string, str(e))
             self.send_response(self.iopub_socket, 'stream',
                                {'name': 'stderr', 'text': message})
 

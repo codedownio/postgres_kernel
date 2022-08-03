@@ -101,8 +101,8 @@ class PostgresKernel(Kernel):
                 return keys, c.fetchall()
             return None, None
 
-    CONN_STRING_COMMENT = re.compile(r'--\s*connection:\s*(.*)\s*$')
-    AUTOCOMMIT_SWITCH_COMMENT = re.compile(r'--\s*autocommit:\s*(\w+)\s*$')
+    CONN_STRING_COMMENT = re.compile(r'--\s*connection:\s*(\S+)\s*$', re.MULTILINE)
+    AUTOCOMMIT_SWITCH_COMMENT = re.compile(r'--\s*autocommit:\s*(\w+)\s*$', re.MULTILINE)
 
     def change_connection(self, conn_string):
         self._conn_string = conn_string
